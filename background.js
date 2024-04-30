@@ -21,10 +21,12 @@ function extractContent() {
 }
 
 // Função para enviar conteúdo extraído para a API e receber o resultado
-async function summarizeContent() {
+async function summarizeContent(lang) {
     try {
         const content = await extractContent();
         if (!content) throw new Error('No content to summarize');
+
+        let systemCommand = 'Summarize in ' + lang + ' language:'
 
         const response = await fetch('http://localhost:1234/v1/chat/completions', {
             method: 'POST',
@@ -34,7 +36,7 @@ async function summarizeContent() {
             body: JSON.stringify({
                 model: "lmstudio-community/Meta-Llama-3-8B-Instruct-GGUF",
                 messages: [
-                    { role: "system", content: "Summarize: " },
+                    { role: "system", content: systemCommand },
                     { role: "user", content: content }
                 ],
                 temperature: 0.7,
@@ -73,8 +75,12 @@ async function summarizeContent() {
 
 // Listener para comunicação com o popup
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.command === 'summarize') {
-        summarizeContent().then(sendResponse);
+    if (message.command === 'summarizeEn') {
+        summarizeContent('english').then(sendResponse);
+        return true; // indica que a resposta será assíncrona
+    }
+    if (message.command === 'summarizeOrig') {
+        summarizeContent('original').then(sendResponse);
         return true; // indica que a resposta será assíncrona
     }
 });
