@@ -1,6 +1,6 @@
 # Local Web Page Summarizer Chrome Extension
 
-This Chrome extension provides a convenient way to summarize the content of web pages and PDF documents directly from your browser. Utilizing a local API that simulates the OpenAI API through LM Studio, this extension fetches and displays summaries quickly, helping users to grasp the essential content without reading the entire text.
+This Chrome extension provides a convenient way to summarize the content of web pages directly from your browser. Utilizing a local API that simulates the OpenAI API through LM Studio, this extension fetches and displays summaries quickly, helping users to grasp the essential content without reading the entire text.
 
 ## Features
 
@@ -13,7 +13,7 @@ To install this extension in your Chrome browser, follow these steps:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-username/webpage-pdf-summarizer.git
+   git clone https://github.com/eddieoz/lmstudio-webpage-summarizer.git
    ```
 
 2. **Load the extension in Chrome:**
@@ -25,7 +25,7 @@ To install this extension in your Chrome browser, follow these steps:
 
 After installing the extension, follow these steps to use it:
 
-1. **Navigate to any webpage or open a PDF document in Chrome.**
+1. **Navigate to any webpage in Chrome.**
 2. **Click the extension icon in the Chrome toolbar.**
 3. **Press the "Summarize" button in the popup to view the summary in the text area provided.**
 
