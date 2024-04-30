@@ -1,4 +1,4 @@
-# Web Page and PDF Summarizer Chrome Extension
+# Local Web Page Summarizer Chrome Extension
 
 This Chrome extension provides a convenient way to summarize the content of web pages and PDF documents directly from your browser. Utilizing a local API that simulates the OpenAI API through LM Studio, this extension fetches and displays summaries quickly, helping users to grasp the essential content without reading the entire text.
 
