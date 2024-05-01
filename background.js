@@ -26,7 +26,7 @@ async function summarizeContent(lang) {
         const content = await extractContent();
         if (!content) throw new Error('No content to summarize');
 
-        let systemCommand = 'Summarize in ' + lang + ' language:'
+        let systemCommand = 'Create a summary of the original text in ' + lang + ' language, structured into 3-5 sentences that capture the main ideas and key points. The summary should be easy to understand and free from ambiguity. Summarize in ' + lang + ' language: '
 
         const response = await fetch('http://localhost:1234/v1/chat/completions', {
             method: 'POST',
@@ -39,7 +39,7 @@ async function summarizeContent(lang) {
                     { role: "system", content: systemCommand },
                     { role: "user", content: content }
                 ],
-                temperature: 0.7,
+                temperature: 0.3,
                 max_tokens: -1,
                 stream: true
             })
@@ -48,18 +48,23 @@ async function summarizeContent(lang) {
         let summary = '';
         const reader = response.body.getReader();
         let receivedJson = '';
-        let assistJson = {}
 
         while (true) {
             const { done, value } = await reader.read();
-            if (done) break;
+            if (done) {
+                chrome.runtime.sendMessage({action: 'complete', summary: ''}); // Indicate completion
+                return;
+            }
+            // if (done) break;
             receivedJson = new TextDecoder().decode(value);
+            
             try {
                 const result = JSON.parse(receivedJson.split('data: ')[1]);
                 // Reset the receivedJson for the next chunk if JSON is successfully parsed
                 receivedJson = '';
                 if (result && result.choices && result.choices[0] && result.choices[0].delta && result.choices[0].delta.content) {
                     summary += result.choices[0].delta.content;
+                    chrome.runtime.sendMessage({action: 'update', summary: result.choices[0].delta.content});
                 }
             } catch (error) {
                 // If JSON is not complete, it throws an error which is caught here.
