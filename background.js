@@ -26,8 +26,8 @@ async function summarizeContent(lang) {
         const content = await extractContent();
         if (!content) throw new Error('No content to summarize');
 
-        let systemCommand = 'Create a summary of the original text in ' + lang + ' language, structured into 3-5 sentences that capture the main ideas and key points. The summary should be easy to understand and free from ambiguity. Summarize in ' + lang + ' language: '
-
+        // let systemCommand = 'Create a summary of the original text in ' + lang + ' language, structured into 3-5 sentences that capture the main ideas and key points. The summary should be easy to understand and free from ambiguity. Summarize in ' + lang + ' language: '
+        let systemCommand = 'Summarize in ' + lang + ' language: '
         const response = await fetch('http://localhost:1234/v1/chat/completions', {
             method: 'POST',
             headers: {
