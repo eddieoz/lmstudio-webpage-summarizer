@@ -21,13 +21,21 @@ function extractContent() {
 }
 
 // Função para enviar conteúdo extraído para a API e receber o resultado
-async function summarizeContent(lang) {
-    try {
-        const content = await extractContent();
+async function summarizeContent(contentType, content, lang) {
+    
+    // If it is a webpage, it calls extractContent to clean it up
+    if (contentType === 'web'){
+        content = '';
+        content = await extractContent();
         if (!content) throw new Error('No content to summarize');
+    }
 
+    try {
+        
+        // Prompts
         // let systemCommand = 'Create a summary of the original text in ' + lang + ' language, structured into 3-5 sentences that capture the main ideas and key points. The summary should be easy to understand and free from ambiguity. Summarize in ' + lang + ' language: '
         let systemCommand = 'Summarize in ' + lang + ' language: '
+
         const response = await fetch('http://localhost:1234/v1/chat/completions', {
             method: 'POST',
             headers: {
@@ -80,8 +88,15 @@ async function summarizeContent(lang) {
 
 // Listener para comunicação com o popup
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    console.log("Received message:", message.command);
+
     if (message.command === 'summarize') {
-        summarizeContent(message.language).then(sendResponse);
+        summarizeContent('web', '', message.language).then(sendResponse);
         return true; // indica que a resposta será assíncrona
+    }
+    if (message.command === 'sendPdfContent') {
+        console.log("Processing PDF content.");
+        summarizeContent('pdf', message.content, message.language).then(sendResponse)
+        return true;
     }
 });
