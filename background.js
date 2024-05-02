@@ -80,12 +80,8 @@ async function summarizeContent(lang) {
 
 // Listener para comunicação com o popup
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.command === 'summarizeEn') {
-        summarizeContent('english').then(sendResponse);
-        return true; // indica que a resposta será assíncrona
-    }
-    if (message.command === 'summarizeOrig') {
-        summarizeContent('original').then(sendResponse);
+    if (message.command === 'summarize') {
+        summarizeContent(message.language).then(sendResponse);
         return true; // indica que a resposta será assíncrona
     }
 });

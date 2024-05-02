@@ -1,23 +1,7 @@
-// document.getElementById('summarizeBtn').addEventListener('click', function() {
-//     chrome.runtime.sendMessage({command: 'summarizeEn'}, function(response) {
-//         document.getElementById('summary').value = response;
-//     });
-// });
-
-// document.getElementById('summarizeOrigBtn').addEventListener('click', function() {
-//     chrome.runtime.sendMessage({command: 'summarizeOrig'}, function(response) {
-//         document.getElementById('summary').value = response;
-//     });
-// });
-
 document.getElementById('summarizeBtn').addEventListener('click', function() {
     document.getElementById('summary').value = ''; // Clear previous content
-    chrome.runtime.sendMessage({command: 'summarizeEn'});
-});
-
-document.getElementById('summarizeOrigBtn').addEventListener('click', function() {
-    document.getElementById('summary').value = ''; // Clear previous content
-    chrome.runtime.sendMessage({command: 'summarizeOrig'});
+    const selectedLanguage = document.getElementById('languageSelect').value;
+    chrome.runtime.sendMessage({command: 'summarize', language: selectedLanguage});
 });
 
 // In popup.js
