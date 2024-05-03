@@ -87,16 +87,17 @@ async function summarizeContent(contentType, content, lang) {
 }
 
 // Listener para comunicação com o popup
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    console.log("Received message:", message.command);
 
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.command === 'summarize') {
         summarizeContent('web', '', message.language).then(sendResponse);
-        return true; // indica que a resposta será assíncrona
-    }
-    if (message.command === 'sendPdfContent') {
-        console.log("Processing PDF content.");
+        return true; // asynchronous response
+    } else if (message.command === 'sendPdfContent') {
         summarizeContent('pdf', message.content, message.language).then(sendResponse)
         return true;
+    } else if (message.command === 'summarizeSelectedText') {
+        summarizeContent('text', message.text, message.language).then(sendResponse);
+        return true; // handle selected text summarization
     }
 });
+

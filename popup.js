@@ -1,37 +1,29 @@
 document.getElementById('summarizeBtn').addEventListener('click', async function() {
-    
     const selectedLanguage = document.getElementById('languageSelect').value;
     const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
     
-    chrome.tabs.get(tab.id, async function(tabInfo) {       
-        
-        if (!tabInfo.url.endsWith('.pdf')) {
-            document.getElementById('summary').value = ''; // Clear previous content
-            chrome.runtime.sendMessage({command: 'summarize', language: selectedLanguage});    
-            return;
-        
+    chrome.scripting.executeScript({
+        target: {tabId: tab.id},
+        func: () => window.getSelection().toString(),
+    }, async function(selection) {
+        const selectedText = selection[0].result;
+        if (selectedText) {
+            // Summarize selected text
+            chrome.runtime.sendMessage({command: 'summarizeSelectedText', text: selectedText, language: selectedLanguage});
+        } else if (!tab.url.endsWith('.pdf')) {
+            // Summarize whole page if no text is selected and it's not a PDF
+            chrome.runtime.sendMessage({command: 'summarize', language: selectedLanguage});
         } else {
-            try {
-                document.getElementById('summary').value = ''; // Clear previous content
-                chrome.scripting.executeScript({
-                    target: {tabId: tab.id},
-                    func: function(selectedLanguage) {
-                        localStorage.setItem('selectedLanguage', selectedLanguage); // send selectedLanguage to storage
-                    },
-                    args: [selectedLanguage]
-                }).then(() => {
-                    chrome.scripting.executeScript({
-                        target: {tabId: tab.id},
-                        files: ['getContentScript.js']
-                    });
-                });
-            } catch (err) {
-                console.error('Error reading PDF:', err);
-            }
+            // Handle PDF summarization
+            localStorage.setItem('selectedLanguage', selectedLanguage);
+            chrome.scripting.executeScript({
+                target: {tabId: tab.id},
+                files: ['getContentScript.js']
+            });
         }
-    })
-    
+    });
 });
+
 
 // In popup.js
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
