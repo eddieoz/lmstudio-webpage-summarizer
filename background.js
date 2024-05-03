@@ -21,7 +21,7 @@ function extractContent() {
 }
 
 // Função para enviar conteúdo extraído para a API e receber o resultado
-async function summarizeContent(contentType, content, lang) {
+async function summarizeContent(contentType, content, lang, mode) {
     
     // If it is a webpage, it calls extractContent to clean it up
     if (contentType === 'web'){
@@ -34,7 +34,11 @@ async function summarizeContent(contentType, content, lang) {
         
         // Prompts
         // let systemCommand = 'Create a summary of the original text in ' + lang + ' language, structured into 3-5 sentences that capture the main ideas and key points. The summary should be easy to understand and free from ambiguity. Summarize in ' + lang + ' language: '
-        let systemCommand = 'Summarize in ' + lang + ' language: '
+        // let systemCommand = 'Summarize in ' + lang + ' language: '
+        let systemCommand = mode === 'summarize' ?
+        'Summarize in ' + lang + ' language: ' :
+        'Explain the following text in simple terms that a beginner can easily understand. Explain in ' + lang + ' language: ';
+
 
         const response = await fetch('http://localhost:1234/v1/chat/completions', {
             method: 'POST',
@@ -87,17 +91,20 @@ async function summarizeContent(contentType, content, lang) {
 }
 
 // Listener para comunicação com o popup
-
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.command === 'summarize') {
-        summarizeContent('web', '', message.language).then(sendResponse);
+    const mode = message.command.includes('explain') ? 'explain' : 'summarize';
+    console.log(mode)
+    if (message.command === 'summarizeSelectedText' || message.command === 'explainSelectedText') {
+        // Directly use the provided text if the command indicates selected text should be used.
+        summarizeContent('text', message.text, message.language, mode).then(sendResponse);
         return true; // asynchronous response
     } else if (message.command === 'sendPdfContent') {
-        summarizeContent('pdf', message.content, message.language).then(sendResponse)
+        // Handle PDF content summarization/explanation
+        summarizeContent('pdf', message.content, message.language, mode).then(sendResponse);
         return true;
-    } else if (message.command === 'summarizeSelectedText') {
-        summarizeContent('text', message.text, message.language).then(sendResponse);
-        return true; // handle selected text summarization
+    } else if (message.command === 'summarize' || message.command === 'explain') {
+        // No text selected, proceed to summarize or explain the entire web content.
+        summarizeContent('web', '', message.language, mode).then(sendResponse);
+        return true;
     }
 });
-

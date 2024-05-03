@@ -24,6 +24,28 @@ document.getElementById('summarizeBtn').addEventListener('click', async function
     });
 });
 
+document.getElementById('explainBtn').addEventListener('click', async function() {
+    const selectedLanguage = document.getElementById('languageSelect').value;
+    const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
+    
+    chrome.scripting.executeScript({
+        target: {tabId: tab.id},
+        func: () => window.getSelection().toString(),
+    }, async function(selection) {
+        const selectedText = selection[0].result;
+        if (selectedText) {
+            chrome.runtime.sendMessage({command: 'explainSelectedText', text: selectedText, language: selectedLanguage});
+        } else if (!tab.url.endsWith('.pdf')) {
+            chrome.runtime.sendMessage({command: 'explain', language: selectedLanguage});
+        } else {
+            localStorage.setItem('selectedLanguage', selectedLanguage);
+            chrome.scripting.executeScript({
+                target: {tabId: tab.id},
+                files: ['getContentScript.js']
+            });
+        }
+    });
+});
 
 // In popup.js
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
