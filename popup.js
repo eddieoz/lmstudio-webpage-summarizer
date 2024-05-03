@@ -1,5 +1,6 @@
 document.getElementById('summarizeBtn').addEventListener('click', async function() {
     const selectedLanguage = document.getElementById('languageSelect').value;
+
     const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
     
     chrome.scripting.executeScript({
@@ -14,11 +15,18 @@ document.getElementById('summarizeBtn').addEventListener('click', async function
             // Summarize whole page if no text is selected and it's not a PDF
             chrome.runtime.sendMessage({command: 'summarize', language: selectedLanguage});
         } else {
-            // Handle PDF summarization
-            localStorage.setItem('selectedLanguage', selectedLanguage);
             chrome.scripting.executeScript({
                 target: {tabId: tab.id},
-                files: ['getContentScript.js']
+                func: (selectedLanguage) => {
+                    localStorage.setItem('selectedLanguage', selectedLanguage); // Ensure it's set in the right context
+                    // Now, inject the script or continue other operations that depend on this setting
+                },
+                args: [selectedLanguage]
+            }).then(() => {
+                chrome.scripting.executeScript({
+                    target: {tabId: tab.id},
+                    files: ['getContentScript.js']
+                });
             });
         }
     });
@@ -26,6 +34,7 @@ document.getElementById('summarizeBtn').addEventListener('click', async function
 
 document.getElementById('explainBtn').addEventListener('click', async function() {
     const selectedLanguage = document.getElementById('languageSelect').value;
+
     const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
     
     chrome.scripting.executeScript({
@@ -38,10 +47,18 @@ document.getElementById('explainBtn').addEventListener('click', async function()
         } else if (!tab.url.endsWith('.pdf')) {
             chrome.runtime.sendMessage({command: 'explain', language: selectedLanguage});
         } else {
-            localStorage.setItem('selectedLanguage', selectedLanguage);
             chrome.scripting.executeScript({
                 target: {tabId: tab.id},
-                files: ['getContentScript.js']
+                func: (selectedLanguage) => {
+                    localStorage.setItem('selectedLanguage', selectedLanguage); // Ensure it's set in the right context
+                    // Now, inject the script or continue other operations that depend on this setting
+                },
+                args: [selectedLanguage]
+            }).then(() => {
+                chrome.scripting.executeScript({
+                    target: {tabId: tab.id},
+                    files: ['getContentScript.js']
+                });
             });
         }
     });

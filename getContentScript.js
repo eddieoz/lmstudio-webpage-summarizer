@@ -1,5 +1,8 @@
 (async () => {
     const url = location.href;
+    console.log('url', url)
+    const selectedLanguage = localStorage.getItem('selectedLanguage')
+    console.log("language", selectedLanguage)
 
     if (!url.endsWith('.pdf')) {
         console.error('No PDF found at this URL.');
@@ -22,7 +25,7 @@
             chrome.runtime.sendMessage({
                 command: 'sendPdfContent',
                 content: selection.toString(),
-                language: localStorage.getItem('selectedLanguage')
+                language: selectedLanguage
             });
         } else {
             // Otherwise, extract all text from the PDF
@@ -36,7 +39,7 @@
             chrome.runtime.sendMessage({
                 command: 'sendPdfContent',
                 content: fullText,
-                language: localStorage.getItem('selectedLanguage')
+                language: selectedLanguage
             });
         }
     } catch (err) {

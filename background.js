@@ -93,7 +93,6 @@ async function summarizeContent(contentType, content, lang, mode) {
 // Listener para comunicação com o popup
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     const mode = message.command.includes('explain') ? 'explain' : 'summarize';
-    console.log(mode)
     if (message.command === 'summarizeSelectedText' || message.command === 'explainSelectedText') {
         // Directly use the provided text if the command indicates selected text should be used.
         summarizeContent('text', message.text, message.language, mode).then(sendResponse);
