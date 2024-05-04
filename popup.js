@@ -113,3 +113,13 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     summaryElement.innerHTML = converter.makeHtml(summaryElement.innerHTML);
   }
 });
+
+document.getElementById("copyBtn").addEventListener("click", function () {
+    const summaryText = document.getElementById("summary").innerText;
+    navigator.clipboard.writeText(summaryText).then(function() {
+        console.log('Text copied to clipboard');
+    }).catch(function(err) {
+        console.error('Could not copy text: ', err);
+    });
+});
+
