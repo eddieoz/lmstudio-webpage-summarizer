@@ -7,8 +7,8 @@
 </head>
 <body>
     <div class="container">
-        <textarea id="summary" placeholder="Show summary here" readonly></textarea>
-        <div class="actions">
+        <div id="summary" class="summary-box">Summary will appear here...</div>
+            <div class="actions">
             <button id="explainBtn">Explain</button>
             <button id="summarizeBtn">Summarize</button>
             <select id="languageSelect">
@@ -19,5 +19,7 @@
         </div>
     </div>
     <script src="popup.js"></script>
+    <script src="lib/showdown.min.js"></script>
+
 </body>
 </html>
