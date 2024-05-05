@@ -40,10 +40,8 @@ async function summarizeContent(contentType, content, lang, mode) {
     // let systemCommand = 'Summarize in ' + lang + ' language: '
     let systemCommand =
       mode === "summarize"
-        ? "Summarize in " + lang + " language: "
-        : "Explain the following text in simple terms that a beginner can easily understand. Explain in " +
-          lang +
-          " language: ";
+        ? "Task: Summarize the following article. Lenght: 3-5 sentences. Format: Markdown. Requirements: capture the main ideas and key points; easy to understand; summary should be free from ambiguity. Summarize in  " + lang + " language. Article: "
+        : "Task: Explain following the article. Format: Markdown. Requirements: explain all the main ideas, key points and tech terminology; use simple terms that a beginner can easily understand; explanation should be free from ambiguity. Explain in " + lang + " language. Article: ";
 
     const response = await fetch("http://localhost:1234/v1/chat/completions", {
       method: "POST",
