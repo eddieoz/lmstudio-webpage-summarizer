@@ -110,6 +110,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   } else if (message.action === "complete") {
     const converter = new showdown.Converter(); // Initialize Showdown
     summaryElement.innerHTML += "<p>---End of summary---"; // Indicate completion
+    summaryElement.innerHTML += "<p>made by https://github.com/eddieoz/lmstudio-webpage-summarizer"
     summaryElement.innerHTML = converter.makeHtml(summaryElement.innerHTML);
   }
 });
